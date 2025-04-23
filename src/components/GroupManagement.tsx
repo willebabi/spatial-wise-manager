@@ -21,6 +21,7 @@ interface GroupManagementProps {
 const GroupManagement: React.FC<GroupManagementProps> = ({ selectedLayout }) => {
   const [groupName, setGroupName] = useState("");
   const [selectedColumn, setSelectedColumn] = useState<number | null>(null);
+  const [selectedRow, setSelectedRow] = useState<number | null>(null);
   const [groupRows, setGroupRows] = useState(3);
   const [groupColumns, setGroupColumns] = useState(3);
   const [groups, setGroups] = useState<Group[]>([]);
@@ -31,9 +32,8 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ selectedLayout }) => 
   useEffect(() => {
     if (selectedLayout?.id) {
       loadGroups(selectedLayout.id);
-      
-      // Reset the selected column when the layout changes
       setSelectedColumn(null);
+      setSelectedRow(null);
     }
   }, [selectedLayout]);
 
@@ -58,8 +58,8 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ selectedLayout }) => 
       return;
     }
 
-    if (selectedColumn === null) {
-      toast.error("Please select a column");
+    if (selectedColumn === null || selectedRow === null) {
+      toast.error("Please select both column and row positions");
       return;
     }
 
@@ -68,8 +68,15 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ selectedLayout }) => 
       return;
     }
 
-    if (selectedColumn > selectedLayout.columns) {
-      toast.error("Selected column is out of range");
+    if (selectedColumn > selectedLayout.columns || selectedRow > selectedLayout.rows) {
+      toast.error("Selected position is out of range");
+      return;
+    }
+
+    // Check if position is already occupied
+    const existingGroup = groups.find(g => g.column === selectedColumn && g.row === selectedRow);
+    if (existingGroup) {
+      toast.error("This position is already occupied by another group");
       return;
     }
 
@@ -79,6 +86,7 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ selectedLayout }) => 
         name: groupName,
         layoutId: selectedLayout.id,
         column: selectedColumn,
+        row: selectedRow,
         rows: groupRows,
         columns: groupColumns
       });
@@ -178,23 +186,44 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ selectedLayout }) => 
               />
             </div>
             
-            <div>
-              <Label htmlFor="column">Column Position</Label>
-              <Select
-                value={selectedColumn?.toString() || ""}
-                onValueChange={(value) => setSelectedColumn(parseInt(value))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select column" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array(selectedLayout.columns).fill(0).map((_, index) => (
-                    <SelectItem key={index} value={(index + 1).toString()}>
-                      Column {index + 1}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="column">Column Position</Label>
+                <Select
+                  value={selectedColumn?.toString() || ""}
+                  onValueChange={(value) => setSelectedColumn(parseInt(value))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select column" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array(selectedLayout.columns).fill(0).map((_, index) => (
+                      <SelectItem key={index} value={(index + 1).toString()}>
+                        Column {index + 1}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label htmlFor="row">Row Position</Label>
+                <Select
+                  value={selectedRow?.toString() || ""}
+                  onValueChange={(value) => setSelectedRow(parseInt(value))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select row" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array(selectedLayout.rows).fill(0).map((_, index) => (
+                      <SelectItem key={index} value={(index + 1).toString()}>
+                        Row {index + 1}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             
             <div className="grid grid-cols-2 gap-4">
@@ -301,7 +330,7 @@ const GroupManagement: React.FC<GroupManagementProps> = ({ selectedLayout }) => 
                     <div>
                       <h4 className="font-medium">{group.name}</h4>
                       <p className="text-sm text-gray-500">
-                        Column: {group.column} | Size: {group.rows} rows × {group.columns} columns
+                        Position: Row {group.row}, Column {group.column} | Size: {group.rows} rows × {group.columns} columns
                       </p>
                     </div>
                     

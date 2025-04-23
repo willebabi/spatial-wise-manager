@@ -1,4 +1,3 @@
-
 import Dexie from 'dexie';
 
 // Define the database
@@ -15,6 +14,7 @@ export interface Group {
   name: string;
   layoutId: number;
   column: number;
+  row: number;
   rows: number;
   columns: number;
   createdAt: Date;
@@ -37,9 +37,9 @@ class WMSDatabase extends Dexie {
 
   constructor() {
     super('WMSDatabase');
-    this.version(1).stores({
+    this.version(2).stores({
       layouts: '++id, name, createdAt',
-      groups: '++id, layoutId, name, column, createdAt',
+      groups: '++id, layoutId, name, column, row, createdAt',
       locations: '++id, groupId, layoutId, row, column, address'
     });
     
