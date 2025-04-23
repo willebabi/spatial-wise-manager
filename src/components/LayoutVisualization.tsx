@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -55,12 +54,10 @@ const LayoutVisualization: React.FC<LayoutVisualizationProps> = ({ selectedLayou
       const newIsOccupied = !selectedLocation.isOccupied;
       await updateLocation(selectedLocation.id, { isOccupied: newIsOccupied });
       
-      // Update local state
       setLocations(locations.map(loc => 
         loc.id === selectedLocation.id ? { ...loc, isOccupied: newIsOccupied } : loc
       ));
       
-      // Update selected location
       setSelectedLocation({ ...selectedLocation, isOccupied: newIsOccupied });
       
       toast.success(`Location ${selectedLocation.address} marked as ${newIsOccupied ? 'occupied' : 'empty'}`);
@@ -85,17 +82,6 @@ const LayoutVisualization: React.FC<LayoutVisualizationProps> = ({ selectedLayou
     );
   }
 
-  // Group locations by column for visualization
-  const locationsByColumn: { [key: number]: Location[] } = {};
-  groups.forEach(group => {
-    if (!locationsByColumn[group.column]) {
-      locationsByColumn[group.column] = [];
-    }
-    
-    const groupLocations = locations.filter(loc => loc.groupId === group.id);
-    locationsByColumn[group.column] = [...locationsByColumn[group.column], ...groupLocations];
-  });
-
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6">Layout Visualization: {selectedLayout.name}</h2>
@@ -107,72 +93,75 @@ const LayoutVisualization: React.FC<LayoutVisualizationProps> = ({ selectedLayou
               <div className="flex items-center justify-center h-64">
                 <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
               </div>
-            ) : groups.length === 0 ? (
-              <div className="text-center p-10">
-                <p className="text-gray-500">No groups created yet for this layout.</p>
-                <Button 
-                  className="mt-4"
-                  onClick={() => document.getElementById("groups-tab")?.click()}
-                >
-                  Create Groups
-                </Button>
-              </div>
             ) : (
-              <div className="grid gap-8" style={{ gridTemplateColumns: `repeat(${selectedLayout.columns}, 1fr)` }}>
-                {Array(selectedLayout.columns).fill(0).map((_, colIndex) => {
-                  const columnGroups = groups.filter(g => g.column === colIndex + 1);
-                  return (
-                    <div key={`col-${colIndex}`} className="flex flex-col gap-6">
-                      <div className="text-center font-semibold">Column {colIndex + 1}</div>
-                      
-                      {columnGroups.map(group => {
-                        const groupLocations = locations.filter(loc => loc.groupId === group.id);
+              <div className="grid gap-4">
+                {Array(selectedLayout.rows).fill(0).map((_, rowIndex) => (
+                  <div key={`row-${rowIndex}`} className="flex gap-4">
+                    <div className="w-8 flex items-center justify-center font-medium text-gray-500">
+                      R{rowIndex + 1}
+                    </div>
+                    <div className="flex-1 grid gap-4" style={{ gridTemplateColumns: `repeat(${selectedLayout.columns}, 1fr)` }}>
+                      {Array(selectedLayout.columns).fill(0).map((_, colIndex) => {
+                        const group = groups.find(g => g.row === (rowIndex + 1) && g.column === (colIndex + 1));
+                        const groupLocations = group ? locations.filter(loc => loc.groupId === group.id) : [];
+                        
                         return (
-                          <div key={`group-${group.id}`} className="group-container bg-white">
-                            <h4 className="text-center font-medium mb-3">{group.name}</h4>
-                            <div 
-                              className="grid gap-1"
-                              style={{ gridTemplateColumns: `repeat(${group.columns}, 1fr)` }}
-                            >
-                              {Array(group.rows).fill(0).map((_, groupRowIndex) => (
-                                Array(group.columns).fill(0).map((_, groupColIndex) => {
-                                  const location = groupLocations.find(
-                                    loc => loc.row === groupRowIndex && loc.column === groupColIndex
-                                  );
-                                  
-                                  return (
-                                    <div 
-                                      key={`loc-${groupRowIndex}-${groupColIndex}`}
-                                      className={`
-                                        warehouse-cell 
-                                        ${location?.isOccupied ? 'cell-occupied' : 'cell-empty'} 
-                                        ${selectedLocation?.id === location?.id ? 'cell-selected' : ''}
-                                        cursor-pointer
-                                      `}
-                                      onClick={() => location && handleLocationClick(location)}
-                                    >
-                                      {location && (
-                                        <div className="location-address">
-                                          {location.address.split('-').slice(-2).join('-')}
+                          <div 
+                            key={`cell-${rowIndex}-${colIndex}`} 
+                            className={`
+                              border-2 rounded-md p-2 min-h-[120px]
+                              ${group ? 'border-blue-500 bg-blue-50' : 'border-dashed border-gray-300'}
+                            `}
+                          >
+                            {group ? (
+                              <div>
+                                <div className="text-sm font-medium mb-2 text-blue-700">{group.name}</div>
+                                <div 
+                                  className="grid gap-1 bg-white p-2 rounded-md"
+                                  style={{ 
+                                    gridTemplateColumns: `repeat(${group.columns}, 1fr)`,
+                                    fontSize: '0.7rem'
+                                  }}
+                                >
+                                  {Array(group.rows).fill(0).map((_, groupRowIndex) => (
+                                    Array(group.columns).fill(0).map((_, groupColIndex) => {
+                                      const location = groupLocations.find(
+                                        loc => loc.row === groupRowIndex && loc.column === groupColIndex
+                                      );
+                                      
+                                      return (
+                                        <div 
+                                          key={`loc-${groupRowIndex}-${groupColIndex}`}
+                                          className={`
+                                            warehouse-cell 
+                                            ${location?.isOccupied ? 'cell-occupied' : 'cell-empty'} 
+                                            ${selectedLocation?.id === location?.id ? 'cell-selected' : ''}
+                                            cursor-pointer
+                                          `}
+                                          onClick={() => location && handleLocationClick(location)}
+                                        >
+                                          {location && (
+                                            <div className="location-address">
+                                              {location.address.split('-').slice(-2).join('-')}
+                                            </div>
+                                          )}
                                         </div>
-                                      )}
-                                    </div>
-                                  );
-                                })
-                              ))}
-                            </div>
+                                      );
+                                    })
+                                  ))}
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+                                R{rowIndex + 1}-C{colIndex + 1}
+                              </div>
+                            )}
                           </div>
                         );
                       })}
-                      
-                      {columnGroups.length === 0 && (
-                        <div className="text-center p-4 border border-dashed rounded-md text-gray-400">
-                          No groups in this column
-                        </div>
-                      )}
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             )}
           </div>
