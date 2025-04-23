@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 201 96% 32%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -33,22 +34,6 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
@@ -61,7 +46,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -79,14 +64,6 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -94,8 +71,73 @@
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.warehouse-cell {
+  border: 1px solid #ccc;
+  height: 40px;
+  transition: all 0.2s;
+}
+
+.warehouse-cell:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+.warehouse-cell.selected {
+  background-color: rgba(0, 123, 255, 0.3);
+}
+
+.group-cell {
+  border: 1px solid #ddd;
+  height: 30px;
+}
+
+.group-container {
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.location-address {
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 2px;
+}
+
+.cell-occupied {
+  background-color: #4caf50;
+  color: white;
+}
+
+.cell-empty {
+  background-color: #f5f5f5;
+}
+
+.cell-selected {
+  border: 2px solid #2196F3 !important;
+}
+
+.layout-view {
+  overflow-x: auto;
+  min-height: 400px;
+}
+
+.sidebar {
+  border-right: 1px solid #e0e0e0;
+}
+
+.nav-pills .nav-link.active {
+  background-color: hsl(var(--primary));
+}
+
+.nav-pills .nav-link {
+  color: hsl(var(--foreground));
+}
+
+.nav-pills .nav-link.active {
+  color: hsl(var(--primary-foreground));
 }
