@@ -24,13 +24,13 @@ const Index = () => {
       <Navbar />
       
       <div className="container mx-auto px-4 py-6">
-        <h1 className="text-3xl font-bold mb-8 text-center">Warehouse Management System</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center">Sistema de Gerenciamento de Armazém</h1>
         
         <Tabs defaultValue="layout" onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="layout">Create Layout</TabsTrigger>
-            <TabsTrigger value="groups">Create Groups</TabsTrigger>
-            <TabsTrigger value="visualization">Visualization</TabsTrigger>
+            <TabsTrigger value="layout">Criar Layout</TabsTrigger>
+            <TabsTrigger value="groups">Criar Grupos</TabsTrigger>
+            <TabsTrigger value="visualization">Visualização</TabsTrigger>
           </TabsList>
           
           <Card className="mt-4">

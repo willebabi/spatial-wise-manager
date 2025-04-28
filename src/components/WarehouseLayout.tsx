@@ -31,19 +31,19 @@ const WarehouseLayout: React.FC<WarehouseLayoutProps> = ({ setSelectedLayout }) 
         setSelectedLayout(loadedLayouts[0]);
       }
     } catch (error) {
-      console.error("Error loading layouts:", error);
-      toast.error("Failed to load layouts");
+      console.error("Erro ao carregar layouts:", error);
+      toast.error("Falha ao carregar layouts");
     }
   };
 
   const handleCreateLayout = async () => {
     if (!layoutName.trim()) {
-      toast.error("Layout name is required");
+      toast.error("Nome do layout é obrigatório");
       return;
     }
 
     if (rows < 1 || columns < 1) {
-      toast.error("Rows and columns must be at least 1");
+      toast.error("Linhas e colunas devem ser pelo menos 1");
       return;
     }
 
@@ -55,56 +55,56 @@ const WarehouseLayout: React.FC<WarehouseLayoutProps> = ({ setSelectedLayout }) 
         columns
       });
       
-      toast.success(`Layout "${layoutName}" created successfully`);
+      toast.success(`Layout "${layoutName}" criado com sucesso`);
       setLayoutName("");
       await loadLayouts();
     } catch (error) {
-      console.error("Error creating layout:", error);
-      toast.error("Failed to create layout");
+      console.error("Erro ao criar layout:", error);
+      toast.error("Falha ao criar layout");
     }
     setLoading(false);
   };
 
   const handleDeleteLayout = async (id: number) => {
-    if (confirm("Are you sure you want to delete this layout? This will delete all groups and locations associated with it.")) {
+    if (confirm("Tem certeza que deseja excluir este layout? Isso excluirá todos os grupos e locações associados a ele.")) {
       try {
         await deleteLayout(id);
-        toast.success("Layout deleted successfully");
+        toast.success("Layout excluído com sucesso");
         // If the deleted layout was selected, reset the selection
         setSelectedLayout(null);
         await loadLayouts();
       } catch (error) {
-        console.error("Error deleting layout:", error);
-        toast.error("Failed to delete layout");
+        console.error("Erro ao excluir layout:", error);
+        toast.error("Falha ao excluir layout");
       }
     }
   };
 
   const handleSelectLayout = (layout: Layout) => {
     setSelectedLayout(layout);
-    toast.success(`Layout "${layout.name}" selected`);
+    toast.success(`Layout "${layout.name}" selecionado`);
   };
 
   return (
     <div>
       <div className="grid md:grid-cols-2 gap-8">
         <div>
-          <h2 className="text-2xl font-bold mb-4">Create New Layout</h2>
+          <h2 className="text-2xl font-bold mb-4">Criar Novo Layout</h2>
           
           <div className="space-y-4">
             <div>
-              <Label htmlFor="layoutName">Layout Name</Label>
+              <Label htmlFor="layoutName">Nome do Layout</Label>
               <Input
                 id="layoutName"
                 value={layoutName}
                 onChange={(e) => setLayoutName(e.target.value)}
-                placeholder="Enter layout name"
+                placeholder="Digite o nome do layout"
               />
             </div>
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="rows">Rows</Label>
+                <Label htmlFor="rows">Linhas</Label>
                 <Input
                   id="rows"
                   type="number"
@@ -115,7 +115,7 @@ const WarehouseLayout: React.FC<WarehouseLayoutProps> = ({ setSelectedLayout }) 
               </div>
               
               <div>
-                <Label htmlFor="columns">Columns</Label>
+                <Label htmlFor="columns">Colunas</Label>
                 <Input
                   id="columns"
                   type="number"
@@ -131,12 +131,12 @@ const WarehouseLayout: React.FC<WarehouseLayoutProps> = ({ setSelectedLayout }) 
               disabled={loading}
               className="w-full"
             >
-              {loading ? "Creating..." : "Create Layout"}
+              {loading ? "Criando..." : "Criar Layout"}
             </Button>
           </div>
           
           <div className="mt-8">
-            <h3 className="text-xl font-semibold mb-3">Layout Preview</h3>
+            <h3 className="text-xl font-semibold mb-3">Visualização do Layout</h3>
             <div className="overflow-x-auto border rounded-md p-4">
               <div 
                 className="grid gap-1" 
@@ -163,12 +163,12 @@ const WarehouseLayout: React.FC<WarehouseLayoutProps> = ({ setSelectedLayout }) 
         </div>
         
         <div>
-          <h2 className="text-2xl font-bold mb-4">Existing Layouts</h2>
+          <h2 className="text-2xl font-bold mb-4">Layouts Existentes</h2>
           
           {layouts.length === 0 ? (
             <div className="text-center p-6 border rounded-md bg-gray-50">
-              <p>No layouts created yet.</p>
-              <p className="text-gray-500">Create your first layout to get started.</p>
+              <p>Nenhum layout criado ainda.</p>
+              <p className="text-gray-500">Crie seu primeiro layout para começar.</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -183,10 +183,10 @@ const WarehouseLayout: React.FC<WarehouseLayoutProps> = ({ setSelectedLayout }) 
                   <div>
                     <h3 className="font-medium">{layout.name}</h3>
                     <p className="text-sm text-gray-500">
-                      {layout.rows} rows × {layout.columns} columns
+                      {layout.rows} linhas × {layout.columns} colunas
                     </p>
                     <p className="text-xs text-gray-400">
-                      Created: {new Date(layout.createdAt).toLocaleString()}
+                      Criado em: {new Date(layout.createdAt).toLocaleString()}
                     </p>
                   </div>
                   
@@ -199,7 +199,7 @@ const WarehouseLayout: React.FC<WarehouseLayoutProps> = ({ setSelectedLayout }) 
                         handleSelectLayout(layout);
                       }}
                     >
-                      Select
+                      Selecionar
                     </Button>
                     <Button 
                       variant="destructive" 
@@ -209,7 +209,7 @@ const WarehouseLayout: React.FC<WarehouseLayoutProps> = ({ setSelectedLayout }) 
                         if (layout.id) handleDeleteLayout(layout.id);
                       }}
                     >
-                      Delete
+                      Excluir
                     </Button>
                   </div>
                 </div>
